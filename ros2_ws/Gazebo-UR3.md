@@ -67,5 +67,61 @@ trajectory_msgs/msg/JointTrajectory \
 }"
 ```
 
+create my_ur3.urdf.xarco to call ur.urdf.xacro
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://wiki.ros.org/xacro"
+       name="my_ur3">
+
+  <xacro:include filename="$(find ur_description)/urdf/ur.urdf.xacro"/>
+
+</robot>
 
 xacro urdf/my_ur3.urdf.xacro name:=my_ur3 ur_type:=ur3 > /tmp/my_ur3.urdf
+
+check exit
+ls -lh /tmp/my_ur3.urdf
+
+head -20 /tmp/my_ur3.urdf
+
+Validate the URDF
+check_urdf /tmp/my_ur3.urdf
+
+Check the six joints
+grep '<joint ' /tmp/my_ur3.urdf
+
+Check the links
+grep '<link ' /tmp/my_ur3.urdf | grep 'name='
+
+create a Launch file
+ros2 launch my_ur3 display.launch.py
+
+
+ros2 run joint_state_publisher_gui joint_state_publisher_gui
+
+
+ros2 run xacro xacro \
+~/ros2_jazzy_window/ros2_ws/src/my_ur3/urdf/my_ur3.urdf.xacro \
+> /tmp/my_ur3.urdf
+
+ros2 action send_goal \
+/joint_trajectory_controller/follow_joint_trajectory \
+control_msgs/action/FollowJointTrajectory \
+"{
+  trajectory: {
+    joint_names: [
+      'shoulder_pan_joint',
+      'shoulder_lift_joint',
+      'elbow_joint',
+      'wrist_1_joint',
+      'wrist_2_joint',
+      'wrist_3_joint'
+    ],
+    points: [
+      {
+        positions: [0.3, -1.0, 1.0, -1.5, 0.0, 0.0],
+        time_from_start: {sec: 5}
+      }
+    ]
+  }
+}"

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://wiki.ros.org/xacro"
+       name="my_ur3">
+
+  <!-- Arguments required by ur.urdf.xacro -->
+  <xacro:arg name="name" default="my_ur3"/>
+  <xacro:arg name="ur_type" default="ur3"/>
+  <xacro:arg name="tf_prefix" default=""/>
+
+  <!-- Universal Robots description -->
+  <xacro:include filename="$(find ur_description)/urdf/ur.urdf.xacro"/>
+
+  <!-- ========================================================= -->
+  <!-- Our gripper -->
+  <!-- ========================================================= -->
+
+  <xacro:include
+    filename="$(find my_ur3)/urdf/gripper.xacro"/>
+
+  <!-- ========================================================= -->
+  <!-- Instantiate gripper -->
+  <!-- ========================================================= -->
+
+  <xacro:simple_gripper
+    parent="flange"/>
+</robot>
