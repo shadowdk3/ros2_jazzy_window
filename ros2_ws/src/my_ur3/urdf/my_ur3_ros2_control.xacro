@@ -15,7 +15,9 @@
                    elbow_joint=0.0,
                    wrist_1_joint=-1.57,
                    wrist_2_joint=0.0,
-                   wrist_3_joint=0.0
+                   wrist_3_joint=0.0,
+                   right_finger_joint=0.04,
+                   left_finger_joint=0.04
                  )}
                ">
 
@@ -45,6 +47,19 @@
       <!-- ================================================== -->
 
       <joint name="right_finger_joint">
+
+        <param name="initial_value">${initial_positions['right_finger_joint']}</param>
+
+        <command_interface name="position"/>
+
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+
+      </joint>
+
+      <joint name="left_finger_joint">
+
+        <param name="initial_value">${initial_positions['left_finger_joint']}</param>
 
         <command_interface name="position"/>
 

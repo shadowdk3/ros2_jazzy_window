@@ -125,3 +125,20 @@ control_msgs/action/FollowJointTrajectory \
     ]
   }
 }"
+
+Control the gripper with its forward position controller. Send the same
+opening value to both fingers in meters.
+
+```
+ros2 topic pub --once \\
+/gripper_controller/commands \\
+std_msgs/msg/Float64MultiArray \\
+'{data: [0.02, 0.02]}'
+```
+
+Use a value between `0.0` (closed) and `0.04` (open). Confirm that the
+controller is active with:
+
+```
+ros2 control list_controllers
+```
