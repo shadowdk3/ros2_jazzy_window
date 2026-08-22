@@ -142,3 +142,6 @@ controller is active with:
 ```
 ros2 control list_controllers
 ```
+
+ros2 launch ur_simulation_gz ur_sim_moveit.launch.py
+ros2 run ur3_moveit_example ur3_move
