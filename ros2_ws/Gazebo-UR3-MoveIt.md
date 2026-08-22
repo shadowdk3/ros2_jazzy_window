@@ -119,3 +119,26 @@ ros2 launch ur_simulation_gz ur_sim_moveit.launch.py
 ```
 ros2 run ur3_moveit_example ur3_move
 ```
+
+### Add Gripper
+---------------------------------
+
+1. run gripper sample
+
+```
+ros2 launch gz_ros2_control_demos gripper_mimic_joint_example_position.launch.py
+```
+
+2. Publish message to control gripper finger position
+
+- Open position
+
+```
+ros2 topic pub --once   /gripper_controller/commands   std_msgs/msg/Float64MultiArray   "{data: [0.0]}"
+```
+
+- Close position
+
+```
+ros2 topic pub --once   /gripper_controller/commands   std_msgs/msg/Float64MultiArray   "{data: [0.4]}"
+```
