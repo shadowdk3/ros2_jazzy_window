@@ -119,3 +119,67 @@ ros2 launch ur_simulation_gz ur_sim_moveit.launch.py
 ```
 ros2 run ur3_moveit_example ur3_move
 ```
+
+### Add Gripper
+---------------------------------
+
+1. run gripper sample
+
+```
+ros2 launch gz_ros2_control_demos gripper_mimic_joint_example_position.launch.py
+```
+
+2. Publish message to control gripper finger position
+
+- Open position
+
+```
+ros2 topic pub --once   /gripper_controller/commands   std_msgs/msg/Float64MultiArray   "{data: [0.0]}"
+```
+
+- Close position
+
+```
+ros2 topic pub --once   /gripper_controller/commands   std_msgs/msg/Float64MultiArray   "{data: [0.4]}"
+```
+
+## Moveit Gripper
+
+               MoveIt
+                  │
+                  │
+             gripper group
+                  │
+                  ▼
+        right_finger_joint
+                  │
+                  │ mimic
+                  ▼
+        left_finger_joint
+
+1. modify the gripper collision
+
+copy `gripper_mimic_joint_example_position.xacro.urdf` to `urdf`, and add collision inside `<link name="finger_right">` and `<link name="finger_left">`
+
+```
+<collision>
+  <geometry>
+    <box size="0.4 0.1 1"/>
+  </geometry>
+</collision>
+```
+
+2. create a launch file in own package for open own xacro.urdf, reference `gripper_display.launch.py`
+
+3. modify `setup.py` to make sure installs the URDF and launch file in `data_files`
+
+```
+(
+    os.path.join('share', 'ur3_moveit_example', 'urdf'),
+    glob('urdf/*')
+),
+(
+    os.path.join('share', 'ur3_moveit_example', 'launch'),
+    glob('launch/*.launch.py')
+),
+```

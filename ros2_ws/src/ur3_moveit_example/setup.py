@@ -1,3 +1,6 @@
+from glob import glob
+import os
+
 from setuptools import find_packages, setup
 
 package_name = 'ur3_moveit_example'
@@ -10,6 +13,14 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        (
+            os.path.join('share', 'ur3_moveit_example', 'urdf'),
+            glob('urdf/*')
+        ),
+        (
+            os.path.join('share', 'ur3_moveit_example', 'launch'),
+            glob('launch/*.launch.py')
+        ),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -25,6 +36,8 @@ setup(
     entry_points={
         'console_scripts': [
             'ur3_move = ur3_moveit_example.ur3_move:main',
+            'gripper_pub = ur3_moveit_example.gripper_pub:main',
+            'gripper_moveit = ur3_moveit_example.gripper_moveit:main',
         ],
     },
 )
