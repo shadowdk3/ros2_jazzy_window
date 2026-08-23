@@ -143,6 +143,86 @@ ros2 topic pub --once   /gripper_controller/commands   std_msgs/msg/Float64Multi
 ros2 topic pub --once   /gripper_controller/commands   std_msgs/msg/Float64MultiArray   "{data: [0.4]}"
 ```
 
+## Link UR3 and Gripper
+
+world
+ │
+ └── UR3
+      │
+      ├── base_link
+      ├── shoulder_link
+      ├── upper_arm_link
+      ├── forearm_link
+      ├── wrist_1_link
+      ├── wrist_2_link
+      └── wrist_3_link
+             │
+             └── tool0
+                   │
+                   │ tool0_to_gripper
+                   ↓
+              gripper_base
+                   │
+             ┌─────┴─────┐
+             ↓           ↓
+      finger_right   finger_left
+             ↑           ↑
+             │           │
+             └── mimic ──┘
+
+- folder structure 
+
+```
+ur3_moveit_example/
+└── urdf/
+    ├── gripper_position.xacro.urdf   # KEEP unchanged, Gazebo standalone
+    ├── gripper_link.xacro            # NEW, MoveIt component
+    └── ur3_gripper.xacro             # NEW, combined UR3 + gripper
+```
+
+- component structure
+
+```
+gripper_link.xacro
+        │
+        └── gripper geometry + joints
+             └── no Gazebo plugin
+             └── no ros2_control
+
+ur3_gripper.xacro
+        │
+        ├── UR3
+        └── gripper
+             └── tool0_to_gripper
+```
+
+1. Verify urdf 
+
+```
+grep -E 'link name=|joint name=' /tmp/ur3_gripper.urdf
+```
+
+and got 
+
+```
+tool0
+gripper_base
+finger_right
+finger_left
+right_finger_joint
+left_finger_joint
+tool0_to_gripper
+```
+
+2. Check the combined robot visually
+
+```
+ros2 run robot_state_publisher robot_state_publisher \
+  --ros-args \
+  -p robot_description:="$(xacro ~/ros2_jazzy_window/ros2_ws/src/ur3_moveit_example/urdf/ur3_gripper.xacro)"
+```
+
+
 ## Moveit Gripper
 
                MoveIt

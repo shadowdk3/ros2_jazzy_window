@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro"
+       name="ur3_gripper">
+
+  <!-- ===================================================== -->
+  <!-- UR robot macro -->
+  <!-- ===================================================== -->
+
+  <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
+
+  <!-- UR3 parameters -->
+  <xacro:arg name="tf_prefix" default=""/>
+
+  <xacro:arg
+    name="joint_limit_params"
+    default="$(find ur_description)/config/ur3/joint_limits.yaml"/>
+
+  <xacro:arg
+    name="kinematics_params"
+    default="$(find ur_description)/config/ur3/default_kinematics.yaml"/>
+
+  <xacro:arg
+    name="physical_params"
+    default="$(find ur_description)/config/ur3/physical_parameters.yaml"/>
+
+  <xacro:arg
+    name="visual_params"
+    default="$(find ur_description)/config/ur3/visual_parameters.yaml"/>
+
+  <!-- ===================================================== -->
+  <!-- World -->
+  <!-- ===================================================== -->
+
+  <link name="world"/>
+
+  <!-- ===================================================== -->
+  <!-- UR3 -->
+  <!-- ===================================================== -->
+
+  <xacro:ur_robot
+    name="ur3"
+    tf_prefix="$(arg tf_prefix)"
+    parent="world"
+    joint_limits_parameters_file="$(arg joint_limit_params)"
+    kinematics_parameters_file="$(arg kinematics_params)"
+    physical_parameters_file="$(arg physical_params)"
+    visual_parameters_file="$(arg visual_params)"
+    safety_limits="false"
+    safety_pos_margin="0.15"
+    safety_k_position="20"
+    force_abs_paths="true">
+
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0"/>
+
+  </xacro:ur_robot>
+
+
+  <!-- ===================================================== -->
+  <!-- Gripper -->
+  <!-- ===================================================== -->
+
+  <xacro:include
+    filename="$(find ur3_moveit_example)/urdf/gripper_link.xacro"/>
+
+
+  <!-- ===================================================== -->
+  <!-- Attach gripper to UR3 tool0 -->
+  <!-- ===================================================== -->
+
+  <joint name="tool0_to_gripper" type="fixed">
+
+    <parent link="tool0"/>
+
+    <child link="gripper_base"/>
+
+    <!-- Adjust this after looking at the model -->
+    <origin
+      xyz="0 0 0.05"
+      rpy="0 0 0"/>
+
+  </joint>
+
+</robot>
