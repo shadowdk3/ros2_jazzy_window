@@ -1,11 +1,19 @@
 <?xml version="1.0" ?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- scale down the gripper base to match the UR3 end effector size -->
+  <xacro:property name="gripper_scale" value="0.07"/>
+
   <link name="gripper_base">
     <visual>
       <geometry>
-        <box size="0.5 1 1"/>
+        <box size="${0.5 * gripper_scale}
+                   ${1.0 * gripper_scale}
+                   ${1.0 * gripper_scale}"/>     
       </geometry>
-      <origin xyz="0 0 0.5"/>
+      
+      <origin xyz="0 0 ${0.5 * gripper_scale}"/>
+      
       <material name="violet">
         <color rgba="0.4 0.18 0.57 1.0" />
       </material>
@@ -14,24 +22,38 @@
 
     <collision>
       <geometry>
-        <box size="0.5 1 1"/>
+        <box size="${0.5 * gripper_scale}
+          ${1.0 * gripper_scale}
+          ${1.0 * gripper_scale}"/>
       </geometry>
-      <origin xyz="0 0 0.5"/>
+
+      <origin xyz="0 0 ${0.5 * gripper_scale}"/>
     </collision>
 
     <inertial>
-      <origin xyz="0 0 0.5"/>
-      <mass value="50"/>
-      <inertia ixx="8.3333299999999994" ixy="0.0" ixz="0.0" iyy="5.2083300000000001" iyz="0.0" izz="5.2083300000000001"/>
-    </inertial>
+      <origin xyz="0 0 0.25"/>
+      <mass value="6.25"/>
+      <inertia
+        ixx="0.416667"
+        ixy="0"
+        ixz="0"
+        iyy="0.260417"
+        iyz="0"
+        izz="0.260417"/>    
+      </inertial>
   </link>
 
   <link name="finger_right">
     <visual>
       <geometry>
-        <box size="0.4 0.1 1"/>
+        <box size="${0.4 * gripper_scale}
+          ${0.1 * gripper_scale}
+          ${1.0 * gripper_scale}"/>
       </geometry>
-      <origin xyz="0 0.05 0.5"/>
+
+      <origin xyz="0
+                 ${0.05 * gripper_scale}
+                 ${0.5 * gripper_scale}"/>
       <material name="grey">
         <color rgba="0.2 0.2 0.2 1"/>
       </material>
@@ -39,12 +61,18 @@
 
     <collision>
       <geometry>
-        <box size="0.4 0.1 1"/>
+        <box size="${0.4 * gripper_scale}
+                ${0.1 * gripper_scale}
+                ${1.0 * gripper_scale}"/>
       </geometry>
+
+      <origin xyz="0
+                 ${0.05 * gripper_scale}
+                 ${0.5 * gripper_scale}"/>
     </collision>
 
     <inertial>
-      <origin xyz="0 0.05 0.5"/>
+      <origin xyz="0 0.025 0.25"/>
       <mass value="4"/>
       <inertia ixx="0.33666700000000001" ixy="0.0" ixz="0.0" iyy="0.38666700000000001" iyz="0.0" izz="0.056666700000000003"/>
     </inertial>
@@ -53,9 +81,13 @@
   <link name="finger_left">
     <visual>
       <geometry>
-        <box size="0.4 0.1 1"/>
+        <box size="${0.4 * gripper_scale}
+                ${0.1 * gripper_scale}
+                ${1.0 * gripper_scale}"/>
       </geometry>
-      <origin xyz="0 0.05 0.5"/>
+      <origin xyz="0
+                 ${0.05 * gripper_scale}
+                 ${0.5 * gripper_scale}"/>
       <material name="grey">
         <color rgba="0.2 0.2 0.2 1"/>
       </material>
@@ -63,12 +95,17 @@
 
     <collision>
       <geometry>
-        <box size="0.4 0.1 1"/>
+        <box size="${0.4 * gripper_scale}
+                ${0.1 * gripper_scale}
+                ${1.0 * gripper_scale}"/>
       </geometry>
+      <origin xyz="0
+                 ${0.05 * gripper_scale}
+                 ${0.5 * gripper_scale}"/>
     </collision>
 
     <inertial>
-      <origin xyz="0 0.05 0.5"/>
+      <origin xyz="0 0.025 0.25"/>
       <mass value="4"/>
       <inertia ixx="0.33666700000000001" ixy="0.0" ixz="0.0" iyy="0.38666700000000001" iyz="0.0" izz="0.056666700000000003"/>
     </inertial>
@@ -76,18 +113,23 @@
 
   <joint name="right_finger_joint" type="prismatic">
     <axis xyz="0 1 0"/>
-    <origin xyz="0.0 -0.48 1" rpy="0.0 0.0 0.0"/>
-    <parent link="gripper_base"/>
+    <origin
+        xyz="0 ${-0.48 * gripper_scale} ${1.0 * gripper_scale}"
+        rpy="0 0 0"/>    <parent link="gripper_base"/>
     <child link="finger_right"/>
-    <limit effort="1000.0" lower="0" upper="0.38" velocity="10"/>
+    <!-- position limit -->
+    <limit effort="1000.0" lower="0" upper="0.032" velocity="5"/>
   </joint>
 
   <joint name="left_finger_joint" type="prismatic">
-    <mimic joint="right_finger_joint"/>
+    <mimic joint="right_finger_joint"  multiplier="-1.0"/>
     <axis xyz="0 1 0"/>
-    <origin xyz="0.0 0.48 1" rpy="0.0 0.0 3.1415926535"/>
+    <origin
+      xyz="0 ${0.48 * gripper_scale} ${1.0 * gripper_scale}"
+      rpy="0 0 0"/>
     <parent link="gripper_base"/>
     <child link="finger_left"/>
-    <limit effort="1000.0" lower="0" upper="0.38" velocity="10"/>
+    <!-- mimic, no need to change, it will follow the right finger -->
+    <limit effort="1000.0" lower="0" upper="0.0" velocity="5"/>
   </joint>
 </robot>

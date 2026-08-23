@@ -222,6 +222,17 @@ ros2 run robot_state_publisher robot_state_publisher \
   -p robot_description:="$(xacro ~/ros2_jazzy_window/ros2_ws/src/ur3_moveit_example/urdf/ur3_gripper.xacro)"
 ```
 
+other terminal 
+
+```
+rviz2
+```
+
+other terminal
+
+```
+ros2 run joint_state_publisher_gui joint_state_publisher_gui
+```
 
 ## Moveit Gripper
 
