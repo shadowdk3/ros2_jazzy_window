@@ -17,6 +17,8 @@ setup(
             os.path.join('share', 'ur3_moveit_example', 'urdf'),
             glob('urdf/*')
         ),
+        (os.path.join('share', package_name, 'config'), glob('config/*')),
+        (os.path.join('share', package_name, 'launch'), glob('launch/*')),
         (
             os.path.join('share', 'ur3_moveit_example', 'launch'),
             glob('launch/*.launch.py')
