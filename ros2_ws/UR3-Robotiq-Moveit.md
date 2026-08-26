@@ -40,6 +40,14 @@ cp -r ~/PATHTO/robotiq_2f_85_gripper_visualization/urdf/* urdf/
 cp -r ~/PATHTO/robotiq_2f_85_gripper_visualization/meshes/* meshes/
 ```
 
+or 
+
+copy
+robotiq_2f_85_gripper.urdf.xacro
+robotiq_2f_85_macro.urdf.xacro
+2f_85.ros2_contol.xacro
+to `urdf` folder
+
 4. Create combine robot and gripper model, `robot_gripper.urdf.xacro`
 
   - include ur3 model
@@ -88,6 +96,18 @@ cp -r ~/PATHTO/robotiq_2f_85_gripper_visualization/meshes/* meshes/
         rpy="0 0 0"/>
       
     </joint>
+    ```
+
+    or 
+
+    ```
+    <xacro:robotiq_gripper
+        name="RobotiqGripper"
+        prefix=""
+        parent="tool0"
+        sim_gazebo="true">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:robotiq_gripper>
     ```
 
 5. Create urdf file from xacro, need to build project first
@@ -169,7 +189,7 @@ Group name: gripper
 
 ![planning_group3](reference/planning_group3.png)
 
-Check "Add Joint", select "finger_joint"
+Check "Add Joint", select "finger_joint" or "robotiq_85_left_knuckle_joint"
 
 ![planning_group4](reference/planning_group4.png)
 
@@ -288,10 +308,71 @@ has_acceleration_limits: true
 max_acceleration: 5.1
 ```
 
+- fix cannot launch
+
+robot_gripper.ros2_control.xacro in robot_gripper_moveit_setup
+
+  change:
+  ```
+    <xacro:macro name="robotiq gripper_ros2_control" params="
+  ```
+  to
+  ```
+    <xacro:macro name="robotiq_gripper_ros2_control" params="
+  ```
+  
+robot gripper.urdf.xacro in robot_gripper_moveit_setup
+
+  change:
+  ```
+    <xacro:robot gripper_ros2_control name="FakeSystem" initial_positions_file="$(arg initial_positions_file)"/>
+  ```
+
+  to 
+  ```
+    <xacro:robot_gripper_ros2_control name="FakeSystem" initial_positions_file="$(arg initial_positions_file)"/>
+  ```
+
+fix finger cannot plan, remove ros2_control in robot_gripper_final.urdf in robot_gripp
+```
+  <ros2_control name="RobotiqGripper" type="system">
+    <!-- Plugins -->
+    <hardware>
+      <!-- Set use_dummy to true to connect to a dummy driver for testing purposes. -->
+      <param name="use_dummy">false</param>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+    <!-- Joint interfaces -->
+    <!-- With Gazebo or Hardware, they handle mimic joints, so we only need this command interface activated -->
+    <joint name="robotiq_85_left_knuckle_joint">
+      <command_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">0.7929</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="robotiq_85_right_knuckle_joint">
+    </joint>
+    <joint name="robotiq_85_left_inner_knuckle_joint">
+    </joint>
+    <joint name="robotiq_85_right_inner_knuckle_joint">
+    </joint>
+    <joint name="robotiq_85_left_finger_tip_joint">
+    </joint>
+    <joint name="robotiq_85_right_finger_tip_joint">
+    </joint>
+  </ros2_control>
+```
+
 1. run test 
 
 ```
+colcon build
 ros2 launch moveit_robot_setup demo.launch.py
+```
+or 
+```
+ros2 launch robot_gripper_moveit_setup demo.launch.py
 ```
 
 - disable loop animation under planned path

@@ -1,8 +1,9 @@
-<!-- ===================================================== -->
-<!-- Combine UR3 and Robotiq Gripper -->
-<!-- ===================================================== -->
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="robot gripper">
+
+    <!-- ===================================================== -->
+    <!-- Combine UR3 and Robotiq Gripper -->
+    <!-- ===================================================== -->
 
     <!-- ===================================================== -->
     <!-- Include UR3 macros -->
@@ -60,26 +61,17 @@
     <!-- ===================================================== -->
     <!-- Include Robotiq 2F-85 macros -->  
     <!-- ===================================================== -->
-    <xacro:include filename="$(find robot_gripper)/urdf/robotiq_arg2f_85_model_macro.xacro" />
+    <xacro:include filename="$(find robot_gripper)/urdf/robotiq_2f_85_macro.urdf.xacro" />
 
     <!-- ===================================================== -->
     <!-- Robotiq 2F-85 -->
     <!-- ===================================================== -->
-    <xacro:robotiq_arg2f_85 prefix=""/>
-
-    <!-- ===================================================== -->
-    <!-- Attach gripper to UR3 tool0 -->
-    <!-- ===================================================== -->
-    <joint name="gripper_to_robot" type="fixed">
-
-        <parent link="tool0"/>
-        <child link="robotiq_arg2f_base_link"/>
-
-        <!-- Adjust this after looking at the model -->
-        <origin
-        xyz="0 0 0"
-        rpy="0 0 0"/>
-        
-    </joint>
+    <xacro:robotiq_gripper
+        name="RobotiqGripper"
+        prefix=""
+        parent="tool0"
+        sim_gazebo="true">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:robotiq_gripper>
 
 </robot>
