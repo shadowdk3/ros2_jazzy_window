@@ -40,6 +40,7 @@ setup(
             'ur3_move = ur3_moveit_example.ur3_move:main',
             'gripper_pub = ur3_moveit_example.gripper_pub:main',
             'gripper_moveit = ur3_moveit_example.gripper_moveit:main',
+            'robot_gripper_move = ur3_moveit_example.robot_gripper_move:main',
         ],
     },
 )

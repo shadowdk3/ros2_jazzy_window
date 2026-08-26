@@ -376,3 +376,10 @@ ros2 launch robot_gripper_moveit_setup demo.launch.py
 ```
 
 - disable loop animation under planned path
+
+
+2. run a simple script for moveit
+
+```
+ros2 run ur3_moveit_example robot_gripper_move
+```
